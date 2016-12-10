@@ -33,4 +33,14 @@ typedef struct		s_list_line
 	t_list			*elem;
 }					t_list_line;
 
+typedef stuct		s_line
+{
+	int				fd;
+	int				pos_cr;
+	char			cr_p;
+	char			line[BUFF_SIZE];
+	int				type;
+	struct s_line	*next
+}					t_line;
+	
 int		get_next_line(const int fd, char **line);
