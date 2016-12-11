@@ -33,15 +33,16 @@ t_line				*recherche_fd(int fd, t_line *item)
 char				*traitement(int fd, t_line **item, char *line)
 {
 	int				i;
+	int				start;
 
 	i = 0;
 	while (line[i])
 	{
+		start = i;
 		if (line[i] == '\n')
 		{
 			(*item)->nb_cr++;
-			(*item)->pos_cr = i;
-			(*item)->line = line;
+			(*item)->line = ft_strsub(line, start, i);
 		}
 		i++;
 	}
