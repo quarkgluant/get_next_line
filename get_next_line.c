@@ -12,11 +12,55 @@
 
 #include "get_next_line.h"
 
-int			get_next_line(const int fd, char **line)
+int					initilization(t_line **item)
 {
-	int		bytes_read;
-	t_line	*line_elem;
+	t_line			*line_elem;
 
-	initilization(&line_elem);
-	while ((bytes_read = read(fd, )))
+		
+
+}
+
+t_line				*recherche_fd(int fd, t_line *item)
+{
+	while (item->next)
+	{
+		return (item->fd == fd ? item : add_elem(fd, item));
+		item = item->next;
+	}
+}
+
+int					traitement(int fd, t_line **item, char *line)
+{
+	int				i;
+
+	i = 0;
+	while (line[i])
+	{
+		if (line[i] == '\n')
+		{
+			(*item)->nb_cr++;
+			(*item)->pos_cr = i;
+
+		}
+		i++;
+	}
+}
+
+int					get_next_line(const int fd, char **line)
+{
+	int				bytes_read;
+	static t_line	*line_elem;
+	char			*tmp;
+	int				i;
+
+	line_elem = recherche_fd(fd);
+	if (!(tmp = (char *)malloc(sizeof(char) * BUFF_SIZE + 1)))
+		return (GNL_PB);
+	i = 0;
+	while (i < BUFF_SIZE)
+		tmp[i++] = '\0';
+	while ((bytes_read = read(fd, tmp, BUFF_SIZE)) > 0)
+	{
+		traitement(fd, &line_elem, tmp);
+	}
 }
