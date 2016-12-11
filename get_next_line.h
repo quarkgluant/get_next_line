@@ -37,6 +37,7 @@ typedef stuct		s_line
 {
 	int				fd;
 	int				pos_cr;
+	int				to_free;
 	char			cr_p;
 	char			line[BUFF_SIZE];
 	int				type;
