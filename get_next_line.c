@@ -12,12 +12,13 @@
 
 #include "get_next_line.h"
 
-int					initilization(t_line **item)
+int					initilization(t_line **item, int fd, char *line)
 {
 	t_line			*line_elem;
+	char			*tmp;
 
-		
-
+	(*item)->nb_cr = 0;
+	(*item)->flag_to_free = 0;
 }
 
 t_line				*recherche_fd(int fd, t_line *item)
@@ -29,7 +30,7 @@ t_line				*recherche_fd(int fd, t_line *item)
 	}
 }
 
-int					traitement(int fd, t_line **item, char *line)
+char				*traitement(int fd, t_line **item, char *line)
 {
 	int				i;
 
@@ -40,7 +41,7 @@ int					traitement(int fd, t_line **item, char *line)
 		{
 			(*item)->nb_cr++;
 			(*item)->pos_cr = i;
-
+			(*item)->line = line;
 		}
 		i++;
 	}
@@ -61,6 +62,6 @@ int					get_next_line(const int fd, char **line)
 		tmp[i++] = '\0';
 	while ((bytes_read = read(fd, tmp, BUFF_SIZE)) > 0)
 	{
-		traitement(fd, &line_elem, tmp);
+		*line = traitement(fd, &line_elem, tmp);
 	}
 }

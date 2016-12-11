@@ -27,11 +27,9 @@
 typedef struct		s_line
 {
 	int				fd;
-	int				*pos_cr;
-	int				to_free;
+	int				flag_to_free;
 	int				nb_cr;
 	char			*line;
-	int				type;
 	struct s_line	*next
 }					t_line;
 	
