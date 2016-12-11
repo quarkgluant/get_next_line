@@ -20,26 +20,17 @@
 # include <sys/types.h>
 
 # define BUFF_SIZE 32
+# define GNL_OK 1
+# define GNL_EOF 0
+# define GNL_PB -1
 
-typedef struct		s_list
-{
-	char			c;
-	struct s_list	*next;
-}					t_list;
-
-typedef struct		s_list_line
+typedef struct		s_line
 {
 	int				fd;
-	t_list			*elem;
-}					t_list_line;
-
-typedef stuct		s_line
-{
-	int				fd;
-	int				pos_cr;
+	int				*pos_cr;
 	int				to_free;
-	char			cr_p;
-	char			line[BUFF_SIZE];
+	int				nb_cr;
+	char			*line;
 	int				type;
 	struct s_line	*next
 }					t_line;
