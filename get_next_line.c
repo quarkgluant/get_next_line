@@ -23,9 +23,9 @@ int					init_one_link(t_line **item, int fd, char *line)
 	(*item)->line = line;
 }
 
-t_line				*recherche_fd(int fd, t_line **item)
+t_list				*recherche_fd(int fd, t_list **item)
 {
-	t_line			*line_elem;
+	t_list			*line_elem;
 
 	while ((*item)->next)
 	{
@@ -33,11 +33,13 @@ t_line				*recherche_fd(int fd, t_line **item)
 			return (*item);
 		*item = (*item)->next;
 	}
-	ft_lstnew(fd, *item)
-	return ()
+	line_elem = ft_lstnew("\0", fd);
+	ft_lstadd(item, line_elem);
+	line_elem = *item;
+	return (line_elem);
 }
 
-char				*traitement(int fd, t_line **item, char *line, char **ret)
+char				*traitement(int fd, t_list **item, char *line, char **ret)
 {
 	int				i;
 	int				start;
@@ -70,11 +72,9 @@ int					get_next_line(const int fd, char **line)
 
 	if (fd < 0 || !(*line = (char *)malloc(sizeof(char) * BUFF_SIZE)))
 		return (GNL_PB);
-	if (!(tmp = (char *)malloc(sizeof(char) * BUFF_SIZE + 1)))
+	if (!(tmp = ft_strnew(BUFF_SIZE + 1)))
 		return (GNL_PB);
 	i = 0;
-	while (i < BUFF_SIZE)
-		tmp[i++] = '\0';
 	while ((bytes_read = read(fd, tmp, BUFF_SIZE)) > 0)
 	{
 		*line = traitement(fd, &line_elem, tmp, line);
