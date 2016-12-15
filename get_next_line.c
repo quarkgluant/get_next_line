@@ -12,15 +12,15 @@
 
 #include "get_next_line.h"
 
-int					init_one_link(t_line **item, int fd, char *line)
+int					init_one_link(t_list **item, int fd, char *line)
 {
-	t_line			*line_elem;
+	t_content		line_elem;
 	char			*tmp;
 
-	(*item)->nb_cr = 0;
-	(*item)->flag_to_free = 0;
-	(*item)->fd = fd;
-	(*item)->line = line;
+	line_elem.nb_cr = 0;
+	line_elem.flag_to_free = 0;
+	line_elem.fd = fd;
+	line_elem.line = line;
 }
 
 t_list				*recherche_fd(int fd, t_list **item)
