@@ -12,20 +12,21 @@
 
 #include "get_next_line.h"
 
-int					init_one_link(t_list **item, int fd, char *line)
+t_content			*init_one_link(int fd, char *line)
 {
 	t_content		line_elem;
-	char			*tmp;
 
 	line_elem.nb_cr = 0;
 	line_elem.flag_to_free = 0;
 	line_elem.fd = fd;
 	line_elem.line = line;
+	return (&line_elem);
 }
 
 t_list				*recherche_fd(int fd, t_list **item)
 {
 	t_list			*line_elem;
+	t_content		*content_line
 
 	while ((*item)->next)
 	{
@@ -33,7 +34,8 @@ t_list				*recherche_fd(int fd, t_list **item)
 			return (*item);
 		*item = (*item)->next;
 	}
-	line_elem = ft_lstnew("\0", fd);
+	content_line = init_one_link(item, fd, line);
+	line_elem = ft_lstnew(content_line, sizeof(content_line));
 	ft_lstadd(item, line_elem);
 	line_elem = *item;
 	return (line_elem);
