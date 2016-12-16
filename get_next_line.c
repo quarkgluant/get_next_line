@@ -30,11 +30,11 @@ t_list				*recherche_fd(int fd, t_list **item)
 
 	while ((*item)->next)
 	{
-		if ((*item)->fd == fd)
+		if ((*item)->content_line.fd == fd)
 			return (*item);
 		*item = (*item)->next;
 	}
-	content_line = init_one_link(item, fd, line);
+	content_line = init_one_link(fd, line);
 	line_elem = ft_lstnew(content_line, sizeof(content_line));
 	ft_lstadd(item, line_elem);
 	line_elem = *item;
@@ -46,29 +46,26 @@ char				*traitement(int fd, t_list **item, char *line, char **ret)
 	int				i;
 	int				start;
 
-	if (*line_elem == NULL)
-		*line_elem = ft_lstnew(*item, sizeof(item));
-	*item = recherche_fd(fd);
-/*
-	(*item)->line = ft_lstnew(*item, sizeof(item));
+	*item = recherche_fd(fd, item);
+	// (*item)->line = ft_lstnew(*item, sizeof(item));
 	i = 0;
 	while (line[i])
 	{
 		start = i;
 		if (line[i] == '\n')
 		{
-			(*item)->nb_cr++;
-			(*item)->pos_last_cr = i;
+			(*item)->content->nb_cr++;
+			(*item)->content->pos_last_cr = i;
+			return (ft_strsub(line, start, ));
 		}
 		i++;
 	}
-*/
 }
 
 int					get_next_line(const int fd, char **line)
 {
 	int				bytes_read;
-	static t_line	*line_elem;
+	static t_list	*line_elem;
 	char			*tmp;
 	int				i;
 
