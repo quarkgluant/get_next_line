@@ -30,7 +30,7 @@ t_list				*recherche_fd(int fd, t_list **item)
 
 	while ((*item)->next)
 	{
-		if ((*item)->content_line.fd == fd)
+		if ((*item)->content_line->fd == fd)
 			return (*item);
 		*item = (*item)->next;
 	}
@@ -44,38 +44,38 @@ t_list				*recherche_fd(int fd, t_list **item)
 char				*traitement(int fd, t_list **item, char *line, char **ret)
 {
 	int				i;
-	int				start;
+	size_t			start;
 
 	*item = recherche_fd(fd, item);
 	// (*item)->line = ft_lstnew(*item, sizeof(item));
 	i = 0;
-	while (line[i])
+	while ((start = ft_memchr(line, '\n')))
 	{
-		start = i;
-		if (line[i] == '\n')
-		{
-			(*item)->content->nb_cr++;
-			(*item)->content->pos_last_cr = i;
-			return (ft_strsub(line, start, ));
-		}
-		i++;
+		(*item)->content->line = ft_strsub(line, (*item)->content->pos_last_cr, 
+					start - (*item)->content->pos_last_cr);
+		(*item)->content->nb_cr++;
+		(*item)->content->pos_last_cr = start;
 	}
+	
+	
+	return ();
 }
 
 int					get_next_line(const int fd, char **line)
 {
 	int				bytes_read;
 	static t_list	*line_elem;
-	char			*tmp;
+	char			*buf;
 	int				i;
 
-	if (fd < 0 || !(*line = (char *)malloc(sizeof(char) * BUFF_SIZE)))
-		return (GNL_PB);
-	if (!(tmp = ft_strnew(BUFF_SIZE + 1)))
-		return (GNL_PB);
+	if (fd < 0 || !(*line = (char *)malloc(sizeof(char))) || 
+				!(buf = ft_strnew(BUFF_SIZE + 1)))
 	i = 0;
-	while ((bytes_read = read(fd, tmp, BUFF_SIZE)) > 0)
+	while ((bytes_read = read(fd, buf, BUFF_SIZE)) > 0)
 	{
-		*line = traitement(fd, &line_elem, tmp, line);
+		buf[bytes_read] = '\0';
+		*line = traitement(fd, &line_elem, buf, line);
+		if (ft_strchr(buf, '\n'))
+			break ;
 	}
 }
