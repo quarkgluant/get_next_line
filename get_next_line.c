@@ -78,4 +78,6 @@ int					get_next_line(const int fd, char **line)
 		if (ft_strchr(buf, '\n'))
 			break ;
 	}
+	if (ret < BUFF_SIZE && !ft_strlen(line_elem->content->line))
+	return (0);
 }
