@@ -34,9 +34,7 @@ typedef struct		s_list
 typedef struct		s_content
 {
 	int				fd;
-	int				flag_to_free;
 	int				pos_last_cr;
-	int				nb_cr;
 	char			*line;
 }					t_content;
 	
