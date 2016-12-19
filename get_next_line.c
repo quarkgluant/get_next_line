@@ -12,15 +12,14 @@
 
 #include "get_next_line.h"
 
-t_content			*init_one_link(int fd, char *line)
+t_content			*init_one_link(int fd)
 {
 	t_content		line_elem;
 
 	line_elem.nb_cr = 0;
 	line_elem.flag_to_free = 0;
 	line_elem.fd = fd;
-	line_elem.line = line;
-	return (&line_elem);
+ 	return (&line_elem);
 }
 
 t_list				*recherche_fd(int fd, t_list **item)
@@ -30,7 +29,7 @@ t_list				*recherche_fd(int fd, t_list **item)
 
 	while ((*item)->next)
 	{
-		if ((*item)->content_line->fd == fd)
+		if ((*item)->fd == fd)
 			return (*item);
 		*item = (*item)->next;
 	}
@@ -42,23 +41,28 @@ t_list				*recherche_fd(int fd, t_list **item)
 }
 
 char				*traitement(int fd, t_list **item, char *line, char **ret)
-{
+{ 
 	int				i;
-	size_t			start;
+	int				start;
 
-	*item = recherche_fd(fd, item);
-	// (*item)->line = ft_lstnew(*item, sizeof(item));
+	if (*line_elem == NULL)
+		*line_elem = ft_lstnew(*item, sizeof(item));
+	*item = recherche_fd(fd);
+
+/*
+	(*item)->line = ft_lstnew(*item, sizeof(item));
 	i = 0;
-	while ((start = ft_memchr(line, '\n')))
+	while (line[i])
 	{
-		(*item)->content->line = ft_strsub(line, (*item)->content->pos_last_cr, 
-					start - (*item)->content->pos_last_cr);
-		(*item)->content->nb_cr++;
-		(*item)->content->pos_last_cr = start;
+		start = i;
+		if (line[i] == '\n')
+		{
+			(*item)->nb_cr++;
+			(*item)->pos_last_cr = i;
+		}
+		i++;
 	}
-	
-	
-	return ();
+*/
 }
 
 int					get_next_line(const int fd, char **line)
@@ -67,17 +71,21 @@ int					get_next_line(const int fd, char **line)
 	static t_list	*line_elem;
 	char			*buf;
 	int				i;
+	t_list			*cur;
 
-	if (fd < 0 || !(*line = (char *)malloc(sizeof(char))) || 
-				!(buf = ft_strnew(BUFF_SIZE + 1)))
+	if (fd < 0 || !(*line = ft_strnew(1)) || !(buf = ft_strnew(BUFF_SIZE + 1)))
+		return (GNL_PB);
 	i = 0;
+	cur = recherche_fd(fd, &line_elem);
 	while ((bytes_read = read(fd, buf, BUFF_SIZE)) > 0)
 	{
 		buf[bytes_read] = '\0';
-		*line = traitement(fd, &line_elem, buf, line);
-		if (ft_strchr(buf, '\n'))
+		if (!(cur->content->line = ft_strjoin(cur->content->line, buf)))
+			return (GNL_PB);
+		if ((cur->content->pos_last_cr = ft_strchr(buf, '\n')))
 			break ;
 	}
-	if (ret < BUFF_SIZE && !ft_strlen(line_elem->content->line))
-	return (0);
+	if (ret < BUFF_SIZE && !ft_strlen(cur->content->line))
+		return (GNL_EOF);
+
 }
