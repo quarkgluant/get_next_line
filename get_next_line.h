@@ -24,13 +24,6 @@
 # define GNL_EOF 0
 # define GNL_PB -1
 
-typedef struct		s_list
-{
-	void			*content;
-	size_t			content_size;
-	struct s_list	*next;
-}					t_list;
-
 typedef struct		s_content
 {
 	int				fd;
@@ -39,3 +32,4 @@ typedef struct		s_content
 }					t_content;
 	
 int		get_next_line(const int fd, char **line);
+#endif
