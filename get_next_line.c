@@ -1,4 +1,4 @@
-/* ************************************************************************** */
+P /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
@@ -14,12 +14,13 @@
 
 t_content			*init_one_link(int fd)
 {
-	t_content		line_elem;
+	t_content		*line_elem;
 
-	line_elem.nb_cr = 0;
-	line_elem.flag_to_free = 0;
+	if ((line_elem = (t_content *)malloc(sizeof(t_content))))
+		return (NULL);
+	line_elem.pos_last_cr = 0;
 	line_elem.fd = fd;
- 	return (&line_elem);
+	return (line_elem);
 }
 
 t_list				*recherche_fd(int fd, t_list **item)
@@ -29,40 +30,36 @@ t_list				*recherche_fd(int fd, t_list **item)
 
 	while ((*item)->next)
 	{
-		if ((*item)->fd == fd)
+		if ((*item)->content_line->fd == fd)
 			return (*item);
 		*item = (*item)->next;
 	}
-	content_line = init_one_link(fd, line);
+	if ((content_line = init_one_link(fd)))
+		return (NULL);
 	line_elem = ft_lstnew(content_line, sizeof(content_line));
 	ft_lstadd(item, line_elem);
 	line_elem = *item;
 	return (line_elem);
 }
 
-char				*traitement(int fd, t_list **item, char *line, char **ret)
-{ 
-	int				i;
-	int				start;
+char				*traitement(t_list *item, char **line)
+{
+	size_t			start;
 
-	if (*line_elem == NULL)
-		*line_elem = ft_lstnew(*item, sizeof(item));
-	*item = recherche_fd(fd);
-
-/*
-	(*item)->line = ft_lstnew(*item, sizeof(item));
-	i = 0;
-	while (line[i])
+	start = 0;
+	if ((start = ft_strchr(item->content->line, '\n')))
 	{
-		start = i;
-		if (line[i] == '\n')
-		{
-			(*item)->nb_cr++;
-			(*item)->pos_last_cr = i;
-		}
-		i++;
+		if (!(*line = ft_strsub(item->content->line, item->content->pos_last_cr, 
+					start - item->content->pos_last_cr)))
+			return (-1);
+		line++;
+		item->content->pos_last_cr = start;
+		if (start < ft_strlen(item->content->line))
+			item->content->line += ++start;
+		else
+			ft_strclr(item->content->line);
 	}
-*/
+	return (start);
 }
 
 int					get_next_line(const int fd, char **line)
@@ -70,12 +67,10 @@ int					get_next_line(const int fd, char **line)
 	int				bytes_read;
 	static t_list	*line_elem;
 	char			*buf;
-	int				i;
 	t_list			*cur;
 
 	if (fd < 0 || !(*line = ft_strnew(1)) || !(buf = ft_strnew(BUFF_SIZE + 1)))
 		return (GNL_PB);
-	i = 0;
 	cur = recherche_fd(fd, &line_elem);
 	while ((bytes_read = read(fd, buf, BUFF_SIZE)) > 0)
 	{
@@ -87,5 +82,7 @@ int					get_next_line(const int fd, char **line)
 	}
 	if (ret < BUFF_SIZE && !ft_strlen(cur->content->line))
 		return (GNL_EOF);
-
+	if (traitement(cur, line) == -1)
+		return (GNL_PB);
+	free(buf);
 }
