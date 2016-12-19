@@ -52,7 +52,6 @@ char				*traitement(t_list *item, char **line)
 		if (!(*line = ft_strsub(item->content->line, item->content->pos_last_cr, 
 					start - item->content->pos_last_cr)))
 			return (-1);
-		line++;
 		item->content->pos_last_cr = start;
 		if (start < ft_strlen(item->content->line))
 			item->content->line += ++start;
@@ -85,4 +84,5 @@ int					get_next_line(const int fd, char **line)
 	if (traitement(cur, line) == -1)
 		return (GNL_PB);
 	free(buf);
+	return (GNL_OK);
 }
