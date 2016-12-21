@@ -73,7 +73,7 @@ int					get_next_line(const int fd, char **line)
 
 	if (fd < 0 || !(*line = ft_strnew(1)))
 		return (GNL_PB);
-	if (!line|| !(buf = ft_strnew(BUFF_SIZE + 1)) || read(fd, buf, 0) < 0)
+	if (!line || !(buf = ft_strnew(BUFF_SIZE + 1)) || read(fd, buf, 0) < 0)
 		return (GNL_PB);
 	cur = recherche_fd(fd, &line_elem);
 	content_line = (t_content *)(cur->content);
