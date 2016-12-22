@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+#include <stdio.h>
 
 t_content			*init_one_link(int fd)
 {
@@ -21,6 +22,7 @@ t_content			*init_one_link(int fd)
 	line_elem->pos_last_cr = 0;
 	line_elem->fd = fd;
 	line_elem->last_cr = NULL;
+	line_elem->line = NULL;
 	return (line_elem);
 }
 
@@ -29,16 +31,18 @@ t_list				*recherche_fd(int fd, t_list **item)
 	t_list			*line_elem;
 	t_content		*content_line;
 
-	while (*item)
+	line_elem = *item;
+	while (line_elem)
 	{
-		content_line = (t_content *)(*item)->content;
+		content_line = (t_content *)(line_elem->content);
 		if (content_line->fd == fd)
 			return (*item);
-		*item = (*item)->next;
+		line_elem = line_elem->next;
 	}
-	if (!(content_line = init_one_link(fd)))
+	content_line = init_one_link(fd);
+	if (content_line == NULL)
 		return (NULL);
-	line_elem = ft_lstnew(content_line, sizeof(content_line));
+	line_elem = ft_lstnew(content_line, sizeof(t_content));
 	ft_lstadd(item, line_elem);
 	line_elem = *item;
 	return (line_elem);
@@ -67,13 +71,13 @@ int					get_next_line(const int fd, char **line)
 {
 	int				bytes_read;
 	static t_list	*line_elem;
-	char			*buf;
+	char			buf[BUFF_SIZE + 1];
 	t_list			*cur;
 	t_content		*content_line;
 
-	if (fd < 0 || !(*line = ft_strnew(1)))
+	if (fd < 0 || !line)
 		return (GNL_PB);
-	if (!line || !(buf = ft_strnew(BUFF_SIZE + 1)) || read(fd, buf, 0) < 0)
+	if (!(*line = ft_strnew(1)) || read(fd, buf, 0) < 0)
 		return (GNL_PB);
 	cur = recherche_fd(fd, &line_elem);
 	content_line = (t_content *)(cur->content);
@@ -82,13 +86,13 @@ int					get_next_line(const int fd, char **line)
 		buf[bytes_read] = '\0';
 		if (!(content_line->line = ft_strjoin(content_line->line, buf)))
 			return (GNL_PB);
+		printf("content_line->line :%s\n", content_line->line);
 		if ((content_line->last_cr = ft_strchr(buf, '\n')))
 			break ;
 	}
 	if (bytes_read < BUFF_SIZE && !ft_strlen(content_line->line))
 		return (GNL_EOF);
-	if (traitement(&cur, line) == -1)
+	if (traitement(&cur, line) < 0)
 		return (GNL_PB);
-	free(buf);
 	return (GNL_OK);
 }
