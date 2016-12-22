@@ -35,7 +35,7 @@ t_list				*recherche_fd(int fd, t_list **item)
 	{
 		content_line = (t_content *)(line_elem->content);
 		if (content_line->fd == fd)
-			return (*item);
+			return (line_elem);
 		line_elem = line_elem->next;
 	}
 	content_line = init_one_link(fd);
