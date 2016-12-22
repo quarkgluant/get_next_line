@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-#include <stdio.h>
 
 t_content			*init_one_link(int fd)
 {
@@ -22,7 +21,7 @@ t_content			*init_one_link(int fd)
 	line_elem->pos_last_cr = 0;
 	line_elem->fd = fd;
 	line_elem->last_cr = NULL;
-	line_elem->line = NULL;
+	line_elem->line = ft_strnew(0);
 	return (line_elem);
 }
 
@@ -81,12 +80,11 @@ int					get_next_line(const int fd, char **line)
 		return (GNL_PB);
 	cur = recherche_fd(fd, &line_elem);
 	content_line = (t_content *)(cur->content);
-	while ((bytes_read = read(fd, buf, BUFF_SIZE)) > 0)
+	while ((bytes_read = read(fd, buf, BUFF_SIZE)))
 	{
 		buf[bytes_read] = '\0';
 		if (!(content_line->line = ft_strjoin(content_line->line, buf)))
 			return (GNL_PB);
-		printf("content_line->line :%s\n", content_line->line);
 		if ((content_line->last_cr = ft_strchr(buf, '\n')))
 			break ;
 	}
